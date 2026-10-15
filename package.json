@@ -1,0 +1,6 @@
+{
+  "name": "steam-next-fest-atlas", "version": "1.0.0", "private": true, "type": "module",
+  "scripts": {"dev":"next dev --hostname 127.0.0.1", "build":"next build", "start":"node scripts/serve.mjs", "sync":"tsx scripts/sync.ts", "test":"tsx --test tests/*.test.ts", "typecheck":"tsc --noEmit"},
+  "dependencies": {"next":"latest", "react":"latest", "react-dom":"latest", "lucide-react":"latest"},
+  "devDependencies": {"typescript":"latest", "tsx":"latest", "@types/node":"latest", "@types/react":"latest", "@types/react-dom":"latest", "tailwindcss":"^4", "@tailwindcss/postcss":"^4"}
+}
