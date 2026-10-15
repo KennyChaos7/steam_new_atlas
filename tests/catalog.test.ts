@@ -41,12 +41,12 @@ test('normalization separates adventure and puzzles and supports overlapping det
     assert.deepEqual(game.genres,fixture.genres,fixture.tags.join(', '));
   }
 });
-test('search, genre OR, cross-filter AND, sorting and pagination compose correctly', () => {
+test('search, all selected genres, cross-filter AND, sorting and pagination compose correctly', () => {
   const a=normalizeGame(item,{'19':'动作','1667':'恐怖'},'')!;
   const b={...a,appId:200,name:'Beta',chinese:'unsupported' as const,genres:['策略'],platforms:['mac'],demoIds:[]};
   const c={...a,appId:300,name:'Alpha',genres:['恐怖']};
   assert.deepEqual(queryGames([a,b,c],{search:'100',genres:[],chinese:'all',platform:'all',demoOnly:false,sort:'name',page:1,pageSize:24}).games.map(g=>g.appId),[100]);
-  const q={search:'',genres:['动作','策略'],chinese:'supported',platform:'windows',demoOnly:true,sort:'name',page:1,pageSize:24};
+  const q={search:'',genres:['动作','恐怖'],chinese:'supported',platform:'windows',demoOnly:true,sort:'name',page:1,pageSize:24};
   assert.deepEqual(queryGames([a,b,c],q).games.map(g=>g.appId),[100]);
   const r=queryGames([a,b,c],{...q,genres:[],chinese:'all',platform:'all',demoOnly:false,page:9,pageSize:2});
   assert.equal(r.page,2);assert.equal(r.games.length,1);assert.equal(r.total,3);

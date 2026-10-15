@@ -54,7 +54,7 @@ pnpm build
 | `lib/steam.ts` | 官方活动解析与商店数据归一化 |
 | `lib/genres.ts` | 22 类名称、图标及官方标签映射，供采集、筛选和统计共用 |
 | `lib/types.ts` | Game / Catalog 类型契约 |
-| `lib/query.ts` | 搜索、同类型 OR、跨条件 AND、排序和分页 |
+| `lib/query.ts` | 搜索、类型多选取交集、跨条件 AND、排序和分页 |
 | `data/membership.json` | 本次官方候选 ID 与来源证据 |
 | `data/catalog.json` | 采集后的唯一规范数据快照 |
 | `public/catalog.json` | 自动生成的网页可下载副本，勿手工修改 |
