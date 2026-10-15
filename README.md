@@ -11,7 +11,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-打开终端显示的 `http://127.0.0.1:3000`。已附带本次真实采集快照，不必重新采集即可运行。
+打开 `http://127.0.0.1:3000/steam_new_atlas/`。已附带本次真实采集快照，不必重新采集即可运行。
 
 ```sh
 pnpm test
@@ -69,10 +69,12 @@ Catalog：正式活动起止时间、媒体预玩起止时间、日程来源、�
 
 ## 部署
 
-执行 `pnpm build` 后，把 **`out/` 全部内容**上传至支持静态文件的托管服务即可。无需 API 密钥、数据库或常驻 Next 服务。网站应放在域名根路径，因为目录快照请求使用 `/catalog.json`。
+部署目标：<https://kennychaos7.github.io/steam_new_atlas/>。源码仓库：<https://github.com/KennyChaos7/steam_new_atlas>。
 
-Vercel 可选择 Next.js 项目并使用 `pnpm build`；静态服务使用 `out/` 作为发布目录。Cloudflare Pages / Netlify 同样使用构建命令 `pnpm build` 与输出目录 `out`。部署环境使用 Node 24，安装使用锁文件。
+`.github/workflows/pages.yml` 在 `master` 分支收到推送时，使用 Node 24 和 pnpm 11.25.0 安装锁定依赖，运行测试并静态构建，再通过 GitHub Pages 官方 Actions 发布 `out/`。也可在 Actions 页面手动运行。仓库的 Settings → Pages → Source 使用 **GitHub Actions**。
 
-Sites 发布：项目身份与静态输出目录记录在 `.openai/hosting.json`，保留其中的平台真实 project_id 与 `static.directory: "out"`。按 Sites 源码同步、版本保存、部署流程发布。网站按用户明确授权设置为公开访问；发布结果以 Sites 的部署成功状态及返回地址为准。后续更新复用同一 project_id。
+`lib/deployment.ts` 中的 `BASE_PATH` 是仓库路径 `/steam_new_atlas` 的唯一配置来源；Next.js 资源和本地预览服务器共用它。游戏目录通过相对 URL `./catalog.json` 加载、下载，兼容仓库子路径。更换仓库名或自定义域名时，修改此配置并重新构建。
+
+无需 API 密钥、数据库或常驻 Next 服务。自动部署使用提交中的数据快照，不会自动重新采集 Steam 名单；更新数据后提交 `data/` 与 `public/catalog.json` 并推送即可重新部署。现有 `.openai/hosting.json` 仅保留原 Sites 项目身份，GitHub Pages 发布不使用它。
 
 封面由浏览器直接从 Steam CDN 读取，CDN/地区网络异常时显示“封面暂不可用”。Steam 名称、标识和游戏美术归相应权利人所有；本项目不是 Steam 官方网站。

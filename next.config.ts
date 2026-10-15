@@ -1,3 +1,4 @@
 import type { NextConfig } from 'next';
-const config: NextConfig = { output: 'export', images: { unoptimized: true }, trailingSlash: true };
+import { BASE_PATH } from './lib/deployment';
+const config: NextConfig = { output: 'export', basePath: BASE_PATH, images: { unoptimized: true }, trailingSlash: true };
 export default config;
