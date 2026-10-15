@@ -8,3 +8,5 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
 
 .update-status{display:flex;flex-direction:column;align-items:flex-end;gap:6px;text-align:right}.update-status .updated{padding-top:0;max-width:none}.update-schedule{font-size:9px;color:var(--muted)}@media(max-width:700px){.update-status{max-width:160px;padding-top:10px}.update-schedule{font-size:8px}}
+
+.game-card{position:relative}.hide-game{position:absolute;z-index:2;top:8px;right:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid #ffffff30;border-radius:4px;background:#101317e6;color:#e1e3e7}.hide-game:hover{color:var(--orange);border-color:var(--orange)}.cover-open{right:48px}.hidden-count{color:var(--muted)}
