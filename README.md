@@ -29,7 +29,7 @@ pnpm sync
 pnpm build
 ```
 
-强制绕过 24 小时缓存：`pnpm sync --refresh`。采集后需重新构建、部署；网页不会后台自动采集，也未创建定时任务。
+强制绕过 24 小时缓存：`pnpm sync --refresh`。GitHub Actions 每天北京时间 08:00、16:00、22:00 自动采集并发布；页面显示实际采集完成时间。GitHub 定时任务可能排队延迟，计划时间不是精确的上线时间。浏览器本身不执行采集。
 
 采集脚本按 80 个 App ID 分批、最多 2 个并发请求，成功批次缓存在 `.cache/`。超时批次进行一次每批 20 个 ID 的有界补取，之后仍失败则记录具体 ID，不会填入假数据。再次执行会复用有效批次；失败批次因为没有缓存会重新请求。空目录、错届活动或全部元数据请求失败会直接失败并保留上次图鉴。部分失败可以生成快照，缺失数量会显示在网页中。
 
@@ -72,10 +72,10 @@ Catalog：正式活动起止时间、媒体预玩起止时间、日程来源、�
 
 部署目标：<https://kennychaos7.github.io/steam_new_atlas/>。源码仓库：<https://github.com/KennyChaos7/steam_new_atlas>。
 
-`.github/workflows/pages.yml` 在 `master` 分支收到推送时，使用 Node 24 和 pnpm 11.25.0 安装锁定依赖，运行测试并静态构建，再通过 GitHub Pages 官方 Actions 发布 `out/`。也可在 Actions 页面手动运行。仓库的 Settings → Pages → Source 使用 **GitHub Actions**。
+`.github/workflows/pages.yml` 在每天北京时间 08:00、16:00、22:00（`Asia/Shanghai`）、`master` 分支收到推送或手动运行时触发。流程使用 Node 24 和 pnpm 11.25.0 安装锁定依赖，执行 `pnpm sync --refresh` 获取新数据，再运行测试、静态构建并通过 GitHub Pages 官方 Actions 发布 `out/`。采集、测试或构建失败时不发布，已上线页面及其数据时间保持不变。仓库的 Settings → Pages → Source 使用 **GitHub Actions**。
 
 `lib/deployment.ts` 中的 `BASE_PATH` 是仓库路径 `/steam_new_atlas` 的唯一配置来源；Next.js 资源和本地预览服务器共用它。游戏目录通过相对 URL `./catalog.json` 加载、下载，兼容仓库子路径。更换仓库名或自定义域名时，修改此配置并重新构建。
 
-无需 API 密钥、数据库或常驻 Next 服务。自动部署使用提交中的数据快照，不会自动重新采集 Steam 名单；更新数据后提交 `data/` 与 `public/catalog.json` 并推送即可重新部署。现有 `.openai/hosting.json` 仅保留原 Sites 项目身份，GitHub Pages 发布不使用它。
+无需 API 密钥、数据库或常驻 Next 服务。每次发布前都会重新采集，避免代码推送把线上数据回退到仓库内的旧快照。自动采集结果随静态页面与下载目录一起发布，不自动提交回仓库；仓库内快照仍供本地开发和离线验证使用。现有 `.openai/hosting.json` 仅保留原 Sites 项目身份，GitHub Pages 发布不使用它。
 
 封面由浏览器直接从 Steam CDN 读取，CDN/地区网络异常时显示“封面暂不可用”。Steam 名称、标识和游戏美术归相应权利人所有；本项目不是 Steam 官方网站。

@@ -1,8 +1,11 @@
-name: Deploy NEXT ATLAS to GitHub Pages
+name: Refresh and deploy NEXT ATLAS
 
 on:
   push:
     branches: [master]
+  schedule:
+    - cron: '0 8,16,22 * * *'
+      timezone: Asia/Shanghai
   workflow_dispatch:
 
 permissions:
@@ -26,6 +29,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Refresh Steam catalog
+        run: pnpm sync --refresh
       - name: Test
         run: pnpm test
       - name: Build static site
