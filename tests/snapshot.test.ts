@@ -2,6 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import type {Catalog} from '../lib/types';
+import {classifyGenres} from '../lib/genres';
 test('delivered snapshot is an exact partition of official candidates with consistent public export',()=>{
   const catalog:Catalog=JSON.parse(fs.readFileSync('data/catalog.json','utf8'));
   const membership=JSON.parse(fs.readFileSync('data/membership.json','utf8'));
@@ -23,6 +24,7 @@ test('delivered snapshot is an exact partition of official candidates with consi
     if(game.cover)assert.equal(new URL(game.cover).hostname,'shared.fastly.steamstatic.com');
     assert.ok(['supported','unsupported','unknown'].includes(game.chinese));
     assert.ok(game.genres.length>0);
+    assert.deepEqual(game.genres,classifyGenres(game.tags),`stale genres for App ${game.appId}`);
   }
   assert.deepEqual(JSON.parse(fs.readFileSync('public/catalog.json','utf8')),catalog);
 });

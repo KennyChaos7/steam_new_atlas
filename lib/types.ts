@@ -1,4 +1,4 @@
-export const GENRES = ['动作','RPG','策略','模拟经营','冒险解谜','恐怖','卡牌','生存','其他'] as const;
+export { GENRES } from './genres';
 export type Chinese = 'supported' | 'unsupported' | 'unknown';
 export interface Game {
   appId:number; name:string; cover:string|null; storeUrl:string; genres:string[]; tags:string[];

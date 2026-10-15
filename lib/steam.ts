@@ -1,4 +1,5 @@
 import type { Game } from './types';
+import { classifyGenres } from './genres';
 export const EDITION = 'sale_nextfest_october_2026';
 export const OFFICIAL_URL = 'https://store.steampowered.com/sale/nextfest?l=schinese';
 export const PREVIEW_URL = 'https://store.steampowered.com/sale/nextfest_oct26_press/?l=schinese';
@@ -22,17 +23,16 @@ export function extractEvent(html:string): {appIds:number[]; eventId:string; tit
   }
   throw new Error('Official edition mismatch; keep previous snapshot');
 }
-const groups:[string,number[]][]=[['动作',[19]],['RPG',[122]],['策略',[9]],['模拟经营',[599,1643,12472]],['冒险解谜',[21,1664]],['恐怖',[1667]],['卡牌',[1666,32322,1091588]],['生存',[1662,1100689]]];
 export function normalizeGame(item:any,tags:Record<string,string>,at:string):Game|null {
   if(item.success!==1||item.type!==0||!item.name||!item.visible) return null;
   const id=item.appid??item.id;
   const tagids:number[]=item.tagids??item.tags?.map((t:any)=>t.tagid)??[];
-  const genres=groups.filter(([,ids])=>ids.some(id=>tagids.includes(id))).map(([name])=>name);
+  const tagNames=tagids.map(id=>tags[String(id)]).filter(Boolean);
   const asset=item.assets;
   const filename=asset?.main_capsule??asset?.header;
   const cover=asset?.asset_url_format&&filename?'https://shared.fastly.steamstatic.com/store_item_assets/'+asset.asset_url_format.replace('${FILENAME}',filename):null;
   const languages=item.supported_languages;
-  return {appId:id,name:decode(item.name),cover,storeUrl:`https://store.steampowered.com/app/${id}/?l=schinese`,genres:genres.length?genres:['其他'],tags:tagids.map(id=>tags[String(id)]).filter(Boolean),
+  return {appId:id,name:decode(item.name),cover,storeUrl:`https://store.steampowered.com/app/${id}/?l=schinese`,genres:classifyGenres(tagNames),tags:tagNames,
     chinese:!Array.isArray(languages)?'unknown':languages.some((l:any)=>l.elanguage===6&&l.supported)?'supported':'unsupported',
     platforms:['windows','mac','steamos_linux'].filter(p=>item.platforms?.[p]).map(p=>p==='steamos_linux'?'linux':p),
     demoIds:[...new Set<number>(item.related_items?.demo_appid??[])],releaseDate:item.release?.steam_release_date??null,comingSoon:!!(item.is_coming_soon||item.release?.is_coming_soon),
